@@ -4,8 +4,6 @@ Level editor for **POPCORN** (LACRAL software, 1988) — the DOS Arkanoid-style 
 
 Author: **DarkSoL** (Discord: `darksol41`). Made with the support of Claude AI.
 
-*Русская версия — ниже, после английской.*
-
 ---
 
 ## What it is
@@ -92,8 +90,6 @@ The full write-up with the reverse-engineering evidence is in `FORMAT_SOLVED.md`
 |---|---|
 | `PopCornEditor.exe` | The editor. This is all you need to run. |
 | `main.cpp`, `lang.h`, `ppcformat.h`, `cellcodes.h`, `exeformat.h`, `sprites.h` | Sources. `exeformat.h` is the EXEPACK codec, `sprites.h` the extracted sprites, `lang.h` the EN/RU strings. |
-| `popcorn_levels.py` | The same codec as a Python script (`dump` / `toppc` / `frompc` / `test`) for batch work and verification. |
-| `POPCORN_levels.PPC` | The original 49 levels, exported from the game. |
 | `FORMAT_SOLVED.md` | Full description of the format and how it was cracked. |
 
 Rebuild (MinGW-w64):
@@ -102,110 +98,18 @@ Rebuild (MinGW-w64):
 x86_64-w64-mingw32-g++ -std=c++17 -O2 -static -municode -o PopCornEditor.exe main.cpp -lcomdlg32 -lcomctl32 -mwindows
 ```
 
-<sup>If you’d like to support me financially, BTC address: bc1qp476rmcaapl6n6xjvg2la50cfw3kwvxe8sj0m5
+## Legal
 
----
----
+This is an unofficial, free, non-commercial fan tool. It is not affiliated with or
+endorsed by Frédérick Raynal or LACRAL software.
 
-# POPCORN Level Editor 1.0 (по-русски)
+*POPCORN* © 1988 Frédérick Raynal / LACRAL software. The game, its name, graphics and
+levels belong to their author.
 
-Редактор уровней для **POPCORN** (LACRAL software, 1988) — DOS-игры в духе Arkanoid.
+**What is in this package.** The game itself is **not** included: you need your own
+copy of `POPCORN.EXE`, and the levels are read from it. The only material from the
+game inside the editor is the set of small block sprites (`sprites.h`), captured from
+the game screen and used solely to draw the field in graphics mode.
 
-Автор: **DarkSoL** (Discord: `darksol41`). Сделано с помощью поддержки ИИ Claude.
-
-## Что это
-
-Отдельная Windows-программа для правки 49 уровней POPCORN. Работает с банками
-`.PPC` родного редактора POPGEN **и** читает уровни прямо из `POPCORN.EXE`,
-записывая их обратно в игру — то есть свой уровень можно сразу же пройти.
-
-- Нативный Win32 со статической сборкой: без .NET, Python, DLL и установщика.
-  Один `PopCornEditor.exe`, запускается на Windows 10/11 как есть.
-- В графическом режиме поле рисуется **настоящими спрайтами блоков из игры**.
-- Интерфейс на **английском и русском**, переключается на ходу
-  (по умолчанию английский).
-
-**Оригинальная игра POPCORN создана Фредериком Рейналем** (Frédérick Raynal).
-У него есть сайт, где ведётся разработка новых игр PopCorn:
-👉 **[https://ludoid.fr/popcorn2026](https://ludoid.fr/popcorn2026)** — заходите следить за новостями!
-
-## Быстрый старт
-
-1. Запустить `PopCornEditor.exe`.
-2. `Файл → Импорт уровней из POPCORN.EXE...` и выбрать игровой `POPCORN.EXE`.
-3. Нарисовать уровни.
-4. `Файл → Экспорт (патч) в POPCORN.EXE...` — выбрать тот же `POPCORN.EXE`, затем
-   указать имя для пропатченной копии (оригинал не меняется).
-5. Запустить пропатченную копию и играть.
-
-Можно также перетащить `.PPC` или `POPCORN.EXE` на значок редактора либо передать
-путь в командной строке: `PopCornEditor.exe POPCORN.EXE`.
-
-## Мини-мануал
-
-**Рисование.** Выбрать объект в палитре слева (или нажать `F1`..`F10`), затем
-**зажать левую кнопку мыши** и вести — блоки рисуются как карандашом.
-**Зажатая правая кнопка** так же стирает. `Del` выбирает ластик.
-
-**Объекты.** F1–F8 — разрушаемые кирпичи, F3 — *неразрушаемый* блок,
-F9 — телепорт (не больше 6 на уровень), F10 — «картинка», блок 2×3: кликать надо
-по клетке, где будет её **левый верхний** угол.
-
-**Уровни.** `PgUp` / `PgDn` или кнопки `< Пред.` / `След. >` листают уровни;
-можно ввести номер и нажать `Перейти`. `Уровень → Копировать поле в...` дублирует
-текущее поле в другой слот. `Очистить поле` — стереть всё.
-
-**Вид.** `Вид → Графический режим` — настоящие спрайты игры (так по умолчанию);
-`Схематический режим` — простые клетки с числовыми кодами, удобно когда важны
-точные значения байтов.
-
-**Raw code.** Поле `Raw code (0-255)` ставит любое введённое значение байта.
-В оригинальных 49 уровнях встречаются только описанные коды, так что это для
-экспериментов.
-
-**Файлы.** `.PPC` — формат родного редактора POPGEN, для него Открыть/Сохранить.
-Импорт/экспорт `.exe` — это то, что переносит уровни в саму игру.
-
-## Что полезно знать
-
-- Заголовок записи уровня (число кирпичей, позиции телепортов) **пересчитывается
-  автоматически** при экспорте. Руками его править не нужно — а будь он неверным,
-  уровень было бы либо невозможно пройти, либо он завершался бы раньше времени.
-- При патче размер `.exe` остаётся ровно тем же. Это обязательное условие: игра
-  запакована Microsoft EXEPACK, и любое отклонение размера приводит к сообщению
-  *«Packed file is corrupt»*. Перед сохранением редактор распаковывает свой же
-  результат и сверяет побайтово; если проверка не прошла, файл не пишется.
-- Если поле очень «пёстрое», упакованные данные могут не влезть в отведённое место
-  внутри `.exe`. Редактор об этом скажет, а не выдаст сломанную игру — упростите
-  поле (длинные ряды одинаковых клеток пакуются лучше).
-
-## Формат уровней, кратко
-
-Полное описание с доказательствами — в `FORMAT_SOLVED.md`.
-
-- Файл `.PPC`: 6 байт подписи `"LACRAL"` + 49 записей по 176 байт = 8630 байт.
-- Внутри `POPCORN.EXE`: тот же банк с удвоенной подписью (`"LACRALLACRAL"`,
-  12 байт), запакованный EXEPACK вместе с программой.
-- Одна запись (176 байт): байт 0 — число разрушаемых кирпичей; байт 1 — число
-  телепортов; байты 2..7 — их позиции в сетке; байты 8..175 — сетка 14×12,
-  по байту на клетку.
-- Коды клеток: `0` пусто; `1,2,5,6,7,8` кирпичи F1,F2,F5,F6,F7,F8; `10` кирпич F4;
-  `3` неразрушаемый блок F3; `9` телепорт F9; `16..21` блок «картинка» F10.
-
-## Файлы в этой папке
-
-| Файл | Что это |
-|---|---|
-| `PopCornEditor.exe` | Сам редактор. Для запуска больше ничего не нужно. |
-| `main.cpp`, `lang.h`, `ppcformat.h`, `cellcodes.h`, `exeformat.h`, `sprites.h` | Исходники. `exeformat.h` — кодек EXEPACK, `sprites.h` — извлечённые спрайты, `lang.h` — строки EN/RU. |
-| `popcorn_levels.py` | Тот же кодек отдельным скриптом на Python (`dump` / `toppc` / `frompc` / `test`) — для пакетных операций и проверок. |
-| `POPCORN_levels.PPC` | Оригинальные 49 уровней, выгруженные из игры. |
-| `FORMAT_SOLVED.md` | Полное описание формата и как он был раскрыт. |
-
-Пересборка (MinGW-w64):
-
-```
-x86_64-w64-mingw32-g++ -std=c++17 -O2 -static -municode -o PopCornEditor.exe main.cpp -lcomdlg32 -lcomctl32 -mwindows
-```
-
-<sup>If you’d like to support me financially, BTC address: bc1qp476rmcaapl6n6xjvg2la50cfw3kwvxe8sj0m5
+No warranty of any kind. Keep a backup of your original `POPCORN.EXE`.
+If you are a rights holder and want something changed or removed, contact me on Discord (`darksol41`) and I will do it.
